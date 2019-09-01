@@ -20,7 +20,7 @@ contract TimeTable {
       for (uint i = 0; i < r_rows; i++) {
         for (uint j = 0; j < n_cols; j++) {
           owners.push(creator);
-          availability.push(false);
+          availability.push(true);
         }
       }
     }
@@ -32,14 +32,14 @@ contract TimeTable {
 
     function bookRoom(uint timeslot, uint room) public {
       uint id = getId(timeslot, room);
-      require(!availability[id]);
+      require(availability[id], "The room is not available !");
       availability[id] = true;
       owners[id] = msg.sender;
     }
 
-    function cancelRoom(uint timeslot, uint room) public {
+    function cancelReservation(uint timeslot, uint room) public {
       uint id = getId(timeslot, room);
-      require(owners[id] == msg.sender);
+      require(owners[id] == msg.sender, "You can not cancel a reservation you have not made !");
       availability[id] = false;
     }
 

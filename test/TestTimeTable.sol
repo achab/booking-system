@@ -30,7 +30,7 @@ contract TestTimeTable {
     timetable.bookRoom(timeslot, room);
     Assert.equal(timetable.getAvailability()[id], true, "This room should be booked.");
     // cancel the room
-    timetable.cancelRoom(timeslot, room);
+    timetable.cancelReservation(timeslot, room);
     Assert.equal(timetable.getAvailability()[id], false, "This room should be free.");
   }
 
