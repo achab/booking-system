@@ -1,0 +1,33 @@
+{
+  "name": "booking-system",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "next": "9.0.5",
+    "openzeppelin-solidity": "2.3.0",
+    "react": "16.9.0",
+    "react-dom": "16.9.0",
+    "solc": "0.5.0",
+    "truffle": "5.0.1",
+    "truffle-hdwallet-provider": "^1.0.17",
+    "web3": "1.0.0-beta.55"
+  },
+  "description": "",
+  "devDependencies": {},
+  "scripts": {
+    "start": "next start",
+    "build": "next build",
+    "dev": "next"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/achab/booking-system.git"
+  },
+  "keywords": [],
+  "author": "Massil Achab",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/achab/booking-system/issues"
+  },
+  "homepage": "https://github.com/achab/booking-system#readme"
+}
