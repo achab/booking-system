@@ -26,21 +26,23 @@ contract TimeTable {
     }
 
     function getId(uint timeslot, uint room) public view returns (uint) {
-      uint id = (timeslot - 1) * n_rooms + room - 1;
+      // timeslot and room start at 0
+      uint id = timeslot * n_rooms + room;
       return id;
     }
 
     function bookRoom(uint timeslot, uint room) public {
       uint id = getId(timeslot, room);
       require(availability[id], "The room is not available !");
-      availability[id] = true;
+      availability[id] = false;
       owners[id] = msg.sender;
     }
 
     function cancelReservation(uint timeslot, uint room) public {
       uint id = getId(timeslot, room);
       require(owners[id] == msg.sender, "You can not cancel a reservation you have not made !");
-      availability[id] = false;
+      require(!availability[id], "The room has not been booked yet !");
+      availability[id] = true;
     }
 
     function getAvailability() public view returns (bool[] memory) {

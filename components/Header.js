@@ -15,6 +15,9 @@ const Header = () => (
     <Link href="/timetable">
       <a style={linkStyle}>Timetable</a>
     </Link>
+    <Link href="/grid">
+      <a style={linkStyle}>Grid</a>
+    </Link>
   </div>
 );
 

@@ -1,4 +1,4 @@
-{3}import React from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -15,11 +15,9 @@ import data from '../components/data.json';
 const timeslots = data['timeslots'];
 const status = data['status'];
 const companies = data['companies'];
+const roomnumbers = data['roomnumbers'];
 const company_char = companies[0];
 
-console.log('timeslots = ', timeslots)
-console.log('status = ', status)
-console.log('companies = ', companies)
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,55 +36,78 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
-function MyTableCell(props) {
+const MyTableCell = props => {
   const { color, ...other } = props;
   const classes = useStyles(props);
-  return <TableCell className={classes.cell} align="center" {...other} />;
+  return <TableCell style={{backgroundColor:'orange', color: 'white'}} align="center" {...other} />;
+  // return <TableCell className={classes.cell} align="center" {...other} />;
 }
 
-export default function SimpleTable() {
+const MyPaper = props => {
   const classes = useStyles();
-
-  return (
-    <Layout>
-      <p>This is the timetable page.</p>
-      <Paper className={classes.root}>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Time slot</TableCell>
-              <TableCell align="center">{company_char}01</TableCell>
-              <TableCell align="center">{company_char}02</TableCell>
-              <TableCell align="center">{company_char}03</TableCell>
-              <TableCell align="center">{company_char}04</TableCell>
-              <TableCell align="center">{company_char}05</TableCell>
-              <TableCell align="center">{company_char}06</TableCell>
-              <TableCell align="center">{company_char}07</TableCell>
-              <TableCell align="center">{company_char}08</TableCell>
-              <TableCell align="center">{company_char}09</TableCell>
-              <TableCell align="center">{company_char}10</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {timeslots.map((slot, index) => (
-              <TableRow key={slot}>
-                <TableCell component="th" scope="row">{slot}</TableCell>
-                <TableCell align="center"><SimpleMenu timeslot={index} room={1} /></TableCell>
-                <TableCell align="center"><SimpleMenu timeslot={index} room={2} /></TableCell>
-                <TableCell align="center"><SimpleMenu timeslot={index} room={3} /></TableCell>
-                <TableCell align="center"><SimpleMenu timeslot={index} room={4} /></TableCell>
-                <TableCell align="center"><SimpleMenu timeslot={index} room={5} /></TableCell>
-                <TableCell align="center"><SimpleMenu timeslot={index} room={6} /></TableCell>
-                <TableCell align="center"><SimpleMenu timeslot={index} room={7} /></TableCell>
-                <TableCell align="center"><SimpleMenu timeslot={index} room={8} /></TableCell>
-                <TableCell align="center"><SimpleMenu timeslot={index} room={9} /></TableCell>
-                <TableCell align="center"><SimpleMenu timeslot={index} room={10} /></TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-    </Layout>
-  );
+  return <Paper className={classes.root}>{props.children}</Paper>;
 }
+
+const MyTable = props => {
+  const classes = useStyles();
+  return <Table className={classes.table}>{props.children}</Table>;
+}
+
+
+
+class SimpleTable extends React.Component {
+
+  state = {
+    count: 0
+  }
+
+  render() {
+    return (
+      <Layout>
+        <p>This is the timetable page.</p>
+        <MyPaper>
+          <MyTable>
+            <TableHead>
+              <TableRow>
+                <TableCell>Time slot</TableCell>
+                {roomnumbers.map((roomnumber, col) => (
+                  <TableCell align="center" key={roomnumber}>{company_char}{roomnumber}</TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {timeslots.map((slot, row) => (
+                <TableRow key={slot}>
+                  <TableCell component="th" scope="row">{slot}</TableCell>
+                  {roomnumbers.map((roomnumber, col) => (
+                    <MyTableCell key={slot + roomnumber}>
+                      <SimpleMenu
+                        timeslot={row} room={col} count={this.state.count}
+                        setCount={(count) => this.setState({ count })}
+                      />
+                    </MyTableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </MyTable>
+        </MyPaper>
+      </Layout>
+    );
+  }
+}
+
+
+SimpleTable.getInitialProps = async function() {
+  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman');
+  const data = await res.json();
+
+  console.log(`Show data fetched. Count: ${data.length}`);
+
+  return {
+    shows: data.map(entry => entry.show)
+  };
+};
+
+
+export default SimpleTable;
