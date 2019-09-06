@@ -6,7 +6,13 @@ import { MyField } from "./MyField";
 export const MyForm = ({ onSubmit }) => {
   return (
     <Formik
-      initialValues={{ name: "", timeslot: "", roomnumber: "", newStatus: "" }}
+      initialValues={{
+        name: "",
+        password: "",
+        timeslot: "",
+        roomnumber: "",
+        newStatus: ""
+      }}
       onSubmit={(values, { resetForm }) => {
         onSubmit(values);
         resetForm();
@@ -14,8 +20,12 @@ export const MyForm = ({ onSubmit }) => {
     >
       {({ values }) => (
         <Form>
+          <br />
           <div>
             <Field name="name" placeholder="name" component={MyField} />
+          </div>
+          <div>
+            <Field name="password" placeholder="password" component={MyField} />
           </div>
           <div>
             <Field
@@ -38,8 +48,8 @@ export const MyForm = ({ onSubmit }) => {
               component={MyField}
             />
           </div>
+          <br />
           <Button type="submit">submit</Button>
-          <pre>{JSON.stringify(values, null, 2)}</pre>
         </Form>
       )}
     </Formik>

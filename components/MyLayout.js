@@ -1,14 +1,15 @@
-import Header from './Header';
+import Header from "./Header";
+import ButtonAppBar from "./Header2";
 
 const layoutStyle = {
-  margin: 20,
-  padding: 20,
-  border: '1px solid #DDD'
+  margin: 10,
+  padding: 10,
+  border: "1px solid #DDD"
 };
 
 const Layout = props => (
   <div style={layoutStyle}>
-    <Header />
+    <ButtonAppBar />
     {props.children}
   </div>
 );

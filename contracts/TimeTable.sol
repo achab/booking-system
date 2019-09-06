@@ -7,6 +7,7 @@ contract TimeTable {
     uint public n_timeslots;
     uint public n_rooms;
     address[] public owners;
+    address[] public passwords;
     bool[] public availability;
 
     constructor(uint n_timeslots_, uint n_rooms_, address creator) public {
@@ -31,17 +32,19 @@ contract TimeTable {
       return id;
     }
 
-    function bookRoom(uint timeslot, uint room) public {
+    function bookRoom(uint timeslot, uint room, address owner, address password) public {
       uint id = getId(timeslot, room);
       require(availability[id], "The room is not available !");
       availability[id] = false;
-      owners[id] = msg.sender;
+      owners[id] = owner;
+      passwords[id] = password;
     }
 
-    function cancelReservation(uint timeslot, uint room) public {
+    function cancelReservation(uint timeslot, uint room, address owner, address password) public {
       uint id = getId(timeslot, room);
-      require(owners[id] == msg.sender, "You can not cancel a reservation you have not made !");
+      require(owners[id] == owner, "You can not cancel a reservation you have not made !");
       require(!availability[id], "The room has not been booked yet !");
+      require(passwords[id] == password, "The password is not correct !");
       availability[id] = true;
     }
 

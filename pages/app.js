@@ -29,19 +29,24 @@ function getId(timeslot_, room_) {
   return parseInt(timeslot_) * roomnumbers.length + parseInt(room_);
 }
 
-const bookRoom = async function(timeslot, room) {
+const bookRoom = async function(timeslot, room, name, password) {
   var accounts = await web3.eth.getAccounts();
   await booking.methods
-    .bookRoom(timeslot, room)
+    .bookRoom(timeslot, room, ascii_to_hexa(name), ascii_to_hexa(password))
     .send({ from: accounts[0], gasLimit: "1000000" })
     .then(result => console.log("bookRoom: ", result))
     .catch(err => console.error(err));
 };
 
-const cancelReservation = async function(timeslot, room) {
+const cancelReservation = async function(timeslot, room, name, password) {
   var accounts = await web3.eth.getAccounts();
   await booking.methods
-    .cancelReservation(timeslot, room)
+    .cancelReservation(
+      timeslot,
+      room,
+      ascii_to_hexa(name),
+      ascii_to_hexa(password)
+    )
     .send({ from: accounts[0], gasLimit: "1000000" })
     .then(result => console.log("cancelReservation: ", result))
     .catch(err => console.error(err));
@@ -49,6 +54,10 @@ const cancelReservation = async function(timeslot, room) {
 
 const getAvailability = async () => {
   return await booking.methods.getAvailability().call();
+};
+
+const getOwners = async () => {
+  return await booking.methods.getOwners().call();
 };
 
 function useAsync(getMethod) {
@@ -82,27 +91,33 @@ function FetchResource(getMethod) {
 }
 
 const App = () => {
-  // const [availability, setAvailability] = React.useState(
-  //   new Array(timeslots.length * roomnumbers.length).fill("free")
-  // );
-  var value = FetchResource(getAvailability);
-  const [availability, setAvailability] = useState(value);
-  useEffect(
-    () => {
-      setAvailability(value);
-    },
-    [value] // run when `value` changes
-  );
+  // availability array
+  var valueAvailability = FetchResource(getAvailability);
+  const [availability, setAvailability] = useState(valueAvailability);
+  // owners array
+  var valueOwners = FetchResource(getOwners);
+  const [owners, setOwners] = useState(valueOwners);
+  // call useEffect
+  useEffect(() => {
+    setAvailability(valueAvailability);
+    setOwners(valueOwners);
+  }, [valueAvailability, valueOwners]);
 
   return (
     <Layout>
       <div style={{ textAlign: "center" }}>
         <MyForm
-          onSubmit={async ({ timeslot, roomnumber, newStatus }) => {
+          onSubmit={async ({
+            timeslot,
+            roomnumber,
+            newStatus,
+            name,
+            password
+          }) => {
             if (newStatus == "booked") {
-              bookRoom(timeslot, roomnumber);
+              bookRoom(timeslot, roomnumber, name, password);
             } else if (newStatus == "free") {
-              cancelReservation(timeslot, roomnumber);
+              cancelReservation(timeslot, roomnumber, name, password);
             } else {
               throw "`newStatus` should be either `free` or `booked`.";
             }
@@ -114,7 +129,7 @@ const App = () => {
             });
           }}
         />
-        <SimpleTable availability={availability} />
+        <SimpleTable availability={availability} owners={owners} />
       </div>
     </Layout>
   );

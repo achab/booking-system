@@ -36,7 +36,7 @@ function getId(timeslot_, room_) {
   return timeslot_ * roomnumbers.length + room_;
 }
 
-function SimpleTable({ availability }) {
+function SimpleTable({ availability, owners }) {
   const classes = useStyles();
   console.log("in SimpleTable: ", availability);
 
@@ -63,7 +63,9 @@ function SimpleTable({ availability }) {
               {roomnumbers.map((roomnumber, col) => (
                 <TableCell align="center" key={slot + roomnumber}>
                   {isAvailableToStatus[availability[getId(row, col)]] +
-                    " by massil"}
+                    (availability[getId(row, col)]
+                      ? ""
+                      : " by " + owners[getId(row, col)])}
                 </TableCell>
               ))}
             </TableRow>
