@@ -3,24 +3,23 @@ pragma solidity 0.5.0;
 
 contract TimeTable {
 
-    address public manager;
     uint public n_timeslots;
     uint public n_rooms;
-    address[] public owners;
-    address[] public passwords;
+    bytes32[] public owners;
+    bytes32[] public passwords;
     bool[] public availability;
 
-    constructor(uint n_timeslots_, uint n_rooms_, address creator) public {
-        manager = creator;
+    constructor(uint n_timeslots_, uint n_rooms_) public {
         n_timeslots = n_timeslots_;
         n_rooms = n_rooms_;
-        initTable(n_timeslots, n_rooms, manager);
+        initTable(n_timeslots, n_rooms);
     }
 
-    function initTable(uint r_rows, uint n_cols, address creator) internal {
+    function initTable(uint r_rows, uint n_cols) internal {
       for (uint i = 0; i < r_rows; i++) {
         for (uint j = 0; j < n_cols; j++) {
-          owners.push(creator);
+          owners.push("");
+          passwords.push("");
           availability.push(true);
         }
       }
@@ -32,7 +31,7 @@ contract TimeTable {
       return id;
     }
 
-    function bookRoom(uint timeslot, uint room, address owner, address password) public {
+    function bookRoom(uint timeslot, uint room, bytes32 owner, bytes32 password) public {
       uint id = getId(timeslot, room);
       require(availability[id], "The room is not available !");
       availability[id] = false;
@@ -40,7 +39,7 @@ contract TimeTable {
       passwords[id] = password;
     }
 
-    function cancelReservation(uint timeslot, uint room, address owner, address password) public {
+    function cancelReservation(uint timeslot, uint room, bytes32 owner, bytes32 password) public {
       uint id = getId(timeslot, room);
       require(owners[id] == owner, "You can not cancel a reservation you have not made !");
       require(!availability[id], "The room has not been booked yet !");
@@ -52,7 +51,7 @@ contract TimeTable {
       return availability;
     }
 
-    function getOwners() public view returns (address[] memory) {
+    function getOwners() public view returns (bytes32[] memory) {
       return owners;
     }
 

@@ -9,29 +9,33 @@ contract TestTimeTable {
   function testInitialStatus() public {
     uint n_timeslots = 3;
     uint n_rooms = 4;
-    TimeTable timetable = new TimeTable(n_timeslots, n_rooms, msg.sender);
+    TimeTable timetable = new TimeTable(n_timeslots, n_rooms);
 
     uint id = 0;
 
-    Assert.equal(timetable.getAvailability()[id], false, "After deployment, all rooms should be free.");
-    Assert.equal(timetable.getOwners()[id], timetable.manager(), "After deployment, `manager` should own all rooms.");
+    Assert.equal(timetable.getAvailability()[id], true, "After deployment, all rooms should be free.");
+    Assert.equal(timetable.getOwners()[id], 0x0, "After deployment, `0x0` should own all rooms.");
   }
 
   function testBookAndCancel() public {
     uint n_timeslots = 3;
     uint n_rooms = 4;
-    TimeTable timetable = new TimeTable(n_timeslots, n_rooms, msg.sender);
+    TimeTable timetable = new TimeTable(n_timeslots, n_rooms);
 
     uint timeslot = 2;
     uint room = 1;
     uint id = timetable.getId(timeslot, room);
 
+    bytes32 owner = 0x0;
+    bytes32 password = 0x0;
+
+
     // book the room
-    timetable.bookRoom(timeslot, room);
-    Assert.equal(timetable.getAvailability()[id], true, "This room should be booked.");
+    timetable.bookRoom(timeslot, room, owner, password);
+    Assert.equal(timetable.getAvailability()[id], false, "This room should be booked.");
     // cancel the room
-    timetable.cancelReservation(timeslot, room);
-    Assert.equal(timetable.getAvailability()[id], false, "This room should be free.");
+    timetable.cancelReservation(timeslot, room, owner, password);
+    Assert.equal(timetable.getAvailability()[id], true, "This room should be free.");
   }
 
 }

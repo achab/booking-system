@@ -14,16 +14,6 @@ var statusToIsAvailable = {
   booked: false
 };
 
-function ascii_to_hexa(str) {
-  var arr1 = [];
-  var n = str.length;
-  for (var i = 0; i < n; i++) {
-    var hex = Number(str.charCodeAt(i)).toString(16);
-    arr1.push(hex);
-  }
-  return "0x".concat(arr1.join("")).padEnd(66, "0");
-}
-
 function getId(timeslot_, room_) {
   // timeslot and room start at 0
   return parseInt(timeslot_) * roomnumbers.length + parseInt(room_);
@@ -32,7 +22,12 @@ function getId(timeslot_, room_) {
 const bookRoom = async function(timeslot, room, name, password) {
   var accounts = await web3.eth.getAccounts();
   await booking.methods
-    .bookRoom(timeslot, room, ascii_to_hexa(name), ascii_to_hexa(password))
+    .bookRoom(
+      timeslot,
+      room,
+      web3.utils.fromAscii(name),
+      web3.utils.fromAscii(password)
+    )
     .send({ from: accounts[0], gasLimit: "1000000" })
     .then(result => console.log("bookRoom: ", result))
     .catch(err => console.error(err));
@@ -44,8 +39,8 @@ const cancelReservation = async function(timeslot, room, name, password) {
     .cancelReservation(
       timeslot,
       room,
-      ascii_to_hexa(name),
-      ascii_to_hexa(password)
+      web3.utils.fromAscii(name),
+      web3.utils.fromAscii(password)
     )
     .send({ from: accounts[0], gasLimit: "1000000" })
     .then(result => console.log("cancelReservation: ", result))

@@ -8,6 +8,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 
 import data from "./data.json";
+import web3 from "../ethereum/web3";
 
 // define constants
 const timeslots = data["timeslots"];
@@ -38,7 +39,6 @@ function getId(timeslot_, room_) {
 
 function SimpleTable({ availability, owners }) {
   const classes = useStyles();
-  console.log("in SimpleTable: ", availability);
 
   return (
     <Paper className={classes.root}>
@@ -63,9 +63,11 @@ function SimpleTable({ availability, owners }) {
               {roomnumbers.map((roomnumber, col) => (
                 <TableCell align="center" key={slot + roomnumber}>
                   {isAvailableToStatus[availability[getId(row, col)]] +
-                    (availability[getId(row, col)]
+                    (availability[getId(row, col)] ||
+                    owners[getId(row, col)] === undefined ||
+                    !web3.utils.isHex(owners[getId(row, col)])
                       ? ""
-                      : " by " + owners[getId(row, col)])}
+                      : " by " + web3.utils.toAscii(owners[getId(row, col)]))}
                 </TableCell>
               ))}
             </TableRow>
