@@ -130,7 +130,7 @@ function FetchResource(getMethod) {
   return loading ? "Loading..." : value;
 }
 
-const App = () => {
+const Index = () => {
   // availability array
   var valueAvailability = FetchResource(getAvailability);
   const [availability, setAvailability] = useState(valueAvailability);
@@ -161,24 +161,30 @@ const App = () => {
             } else {
               alert("`newStatus` should be either `free` or `booked`.");
             }
-            setAvailability(currentAvailability => {
-              var id = getId(timeslot, roomnumber);
-              return currentAvailability.map(function(val, index) {
-                return index != id ? val : statusToIsAvailable[newStatus];
-              });
-            });
-            setOwners(currentOwners => {
-              var id = getId(timeslot, roomnumber);
-              return currentOwners.map(function(val, index) {
-                return index != id ? val : web3.utils.fromAscii(name);
-              });
+            booking.once("ReservationHasChanged", {}, function(error, event) {
+              console.log(event);
+              if (!error) {
+                setAvailability(currentAvailability => {
+                  var id = getId(timeslot, roomnumber);
+                  return currentAvailability.map(function(val, index) {
+                    return index != id ? val : statusToIsAvailable[newStatus];
+                  });
+                });
+                setOwners(currentOwners => {
+                  var id = getId(timeslot, roomnumber);
+                  return currentOwners.map(function(val, index) {
+                    return index != id ? val : web3.utils.fromAscii(name);
+                  });
+                });
+              }
             });
           }}
         />
+        <br />
         <SimpleTable availability={availability} owners={owners} />
       </div>
     </Layout>
   );
 };
 
-export default App;
+export default Index;

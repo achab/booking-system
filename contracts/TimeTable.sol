@@ -9,8 +9,7 @@ contract TimeTable {
     bytes32[] public passwords;
     bool[] public availability;
 
-    event newRoomBooked(uint timeslot, uint room, bytes32 owner);
-    event newReservationCanceled(uint timeslot, uint room, bytes32 owner);
+    event ReservationHasChanged(uint timeslot, uint room, bytes32 owner);
 
     constructor(uint n_timeslots_, uint n_rooms_) public {
         n_timeslots = n_timeslots_;
@@ -40,7 +39,7 @@ contract TimeTable {
       availability[id] = false;
       owners[id] = owner;
       passwords[id] = password;
-      emit newRoomBooked(timeslot, room, owner);
+      emit ReservationHasChanged(timeslot, room, owner);
     }
 
     function cancelReservation(uint timeslot, uint room, bytes32 owner, bytes32 password) public {
@@ -49,7 +48,7 @@ contract TimeTable {
       require(!availability[id], "The room has not been booked yet !");
       require(passwords[id] == password, "The password is not correct !");
       availability[id] = true;
-      emit newReservationCanceled(timeslot, room, owner);
+      emit ReservationHasChanged(timeslot, room, owner);
     }
 
     function getAvailability() public view returns (bool[] memory) {
