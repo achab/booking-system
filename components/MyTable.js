@@ -65,7 +65,7 @@ function SimpleTable({ availability, owners }) {
                   {isAvailableToStatus[availability[getId(row, col)]] +
                     (availability[getId(row, col)] ||
                     owners[getId(row, col)] === undefined ||
-                    !web3.utils.isHex(owners[getId(row, col)])
+                    !web3.utils.isHexStrict(owners[getId(row, col)])
                       ? ""
                       : " by " + web3.utils.toAscii(owners[getId(row, col)]))}
                 </TableCell>
