@@ -13,6 +13,8 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+EXPOSE 3000
+
 # Compile contract
 RUN node_modules/.bin/truffle compile
 

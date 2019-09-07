@@ -1,5 +1,5 @@
 import Header from "./Header";
-import ButtonAppBar from "./Header2";
+import ButtonAppBar from "./Header";
 
 const layoutStyle = {
   margin: 10,
