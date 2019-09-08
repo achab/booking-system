@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  # first service: ganache emulates a local blockchain where to deploy contracts
+  ganache:
+    build: ganache/
+    ports:
+      - 7545:7545
+  # second service: room booking contract to be deployed on ganache
+  booking-contract:
+    build: booking-contract/
+    network_mode: host
+    volumes:
+      - app-volume:/app/build/contracts/
+    depends_on:
+      - ganache
+  # third service: booking front-end app
+  booking-app:
+    build: booking-app/
+    volumes:
+      - app-volume:/app/build/contracts/
+    ports:
+      - 3000:3000
+    command: ["./scripts/wait-for-contract.sh", "npm run dev"]
+    depends_on:
+      - ganache
+      - booking-contract
+
+volumes:
+  app-volume:

@@ -12,8 +12,6 @@ const roomnumbers = data["roomnumbers"];
 const companies = data["companies"];
 const company_char = companies[0];
 
-const myAddress = "0xAa9f82E8FFDE0B564b7333433B4541a1184dB766";
-
 var statusToIsAvailable = {
   free: true,
   booked: false
@@ -51,6 +49,7 @@ function cancellationMessage(timeslot, room, name) {
 }
 
 const bookRoom = async function(timeslot, room, name, password) {
+  var accounts = await web3.eth.getAccounts();
   try {
     await booking.methods
       .bookRoom(
@@ -59,7 +58,7 @@ const bookRoom = async function(timeslot, room, name, password) {
         web3.utils.fromAscii(name),
         web3.utils.fromAscii(password)
       )
-      .send({ from: myAddress, gasLimit: "1000000" })
+      .send({ from: accounts[0], gasLimit: "1000000" })
       .then(result => console.log("bookRoom: ", result))
       .catch(err => {
         console.log(err);
@@ -72,6 +71,7 @@ const bookRoom = async function(timeslot, room, name, password) {
 };
 
 const cancelReservation = async function(timeslot, room, name, password) {
+  var accounts = await web3.eth.getAccounts();
   try {
     await booking.methods
       .cancelReservation(
@@ -80,7 +80,7 @@ const cancelReservation = async function(timeslot, room, name, password) {
         web3.utils.fromAscii(name),
         web3.utils.fromAscii(password)
       )
-      .send({ from: myAddress, gasLimit: "1000000" })
+      .send({ from: accounts[0], gasLimit: "1000000" })
       .then(result => console.log("cancelReservation: ", result))
       .catch(err => {
         console.log(err);

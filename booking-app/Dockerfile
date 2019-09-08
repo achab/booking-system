@@ -13,13 +13,9 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+# Expose port 3000
 EXPOSE 3000
-
-# Compile contract
-RUN node_modules/.bin/truffle compile
-
-# Deploy contract
-RUN node_modules/.bin/truffle migrate
 
 # Start react app
 CMD ["npm", "run", "dev"]
+# CMD ["sleep", "999d"]
