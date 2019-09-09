@@ -4,6 +4,7 @@ import Web3 from "web3";
 // const provider = new Web3.providers.WebsocketProvider(
 //   "wss://ropsten.infura.io/ws/v3/" + infuraKey
 // );
+
 const provider = new Web3.providers.WebsocketProvider("ws://localhost:7545");
 const web3 = new Web3(provider);
 
