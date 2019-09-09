@@ -14,7 +14,7 @@ import web3 from "../ethereum/web3";
 const timeslots = data["timeslots"];
 const companies = data["companies"];
 const roomnumbers = data["roomnumbers"];
-const company_char = companies[0];
+const company_char = companies[1];
 
 var isAvailableToStatus = {
   true: "free",

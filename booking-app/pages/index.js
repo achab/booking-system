@@ -10,7 +10,7 @@ import booking from "../ethereum/booking";
 const timeslots = data["timeslots"];
 const roomnumbers = data["roomnumbers"];
 const companies = data["companies"];
-const company_char = companies[0];
+const company_char = companies[1];
 
 var statusToIsAvailable = {
   free: true,
@@ -19,7 +19,7 @@ var statusToIsAvailable = {
 
 function getId(timeslot_, room_) {
   // timeslot and room start at 0
-  return parseInt(timeslot_) * roomnumbers.length + parseInt(room_);
+  return parseInt(room_) * timeslots.length + parseInt(timeslot_);
 }
 
 function bookingMessage(timeslot, room, name) {
@@ -48,16 +48,11 @@ function cancellationMessage(timeslot, room, name) {
   return message;
 }
 
-const bookRoom = async function(timeslot, room, name, password) {
+const bookRoom = async function(timeslot, room, name) {
   var accounts = await web3.eth.getAccounts();
   try {
     await booking.methods
-      .bookRoom(
-        timeslot,
-        room,
-        web3.utils.fromAscii(name),
-        web3.utils.fromAscii(password)
-      )
+      .bookRoom(timeslot, room, web3.utils.fromAscii(name))
       .send({ from: accounts[0], gasLimit: "1000000" })
       .then(result => console.log("bookRoom: ", result))
       .catch(err => {
@@ -70,16 +65,11 @@ const bookRoom = async function(timeslot, room, name, password) {
   }
 };
 
-const cancelReservation = async function(timeslot, room, name, password) {
+const cancelReservation = async function(timeslot, room, name) {
   var accounts = await web3.eth.getAccounts();
   try {
     await booking.methods
-      .cancelReservation(
-        timeslot,
-        room,
-        web3.utils.fromAscii(name),
-        web3.utils.fromAscii(password)
-      )
+      .cancelReservation(timeslot, room, web3.utils.fromAscii(name))
       .send({ from: accounts[0], gasLimit: "1000000" })
       .then(result => console.log("cancelReservation: ", result))
       .catch(err => {
@@ -147,17 +137,11 @@ const Index = () => {
     <Layout>
       <div style={{ textAlign: "center" }}>
         <MyForm
-          onSubmit={async ({
-            timeslot,
-            roomnumber,
-            newStatus,
-            name,
-            password
-          }) => {
+          onSubmit={async ({ timeslot, roomnumber, newStatus, name }) => {
             if (newStatus == "booked") {
-              bookRoom(timeslot, roomnumber, name, password);
+              bookRoom(timeslot, roomnumber, name);
             } else if (newStatus == "free") {
-              cancelReservation(timeslot, roomnumber, name, password);
+              cancelReservation(timeslot, roomnumber, name);
             } else {
               alert("`newStatus` should be either `free` or `booked`.");
             }

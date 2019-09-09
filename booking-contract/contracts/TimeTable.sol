@@ -22,7 +22,7 @@ contract TimeTable is ERC721 {
 
     function getTokenId(uint timeslot, uint room) public view returns (uint) {
       // timeslot and room start at 0
-      uint id = room + timeslot * n_rooms;
+      uint id = room * n_timeslots + timeslot;
       return id;
     }
 
