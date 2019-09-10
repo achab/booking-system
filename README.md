@@ -18,4 +18,4 @@ docker-compose up
 ```
 
 Note that port 7545 is to be used by ganache, and then should not be used by another app.
-
+Once started, the app is available on localhost:3000.
