@@ -23,7 +23,7 @@ export default function ButtonAppBar() {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" style={{ background: "#FF0000" }}>
+      <AppBar position="static" style={{ background: "#01579b" }}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -34,7 +34,7 @@ export default function ButtonAppBar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            Coca-Cola
+            Pepsi
           </Typography>
         </Toolbar>
       </AppBar>

@@ -7,9 +7,6 @@ WORKDIR /app
 # Install app dependencies
 COPY package*.json ./
 
-# Clean previous build
-# RUN rm -rf build/contracts/*
-
 # Install libraries
 RUN npm install
 
@@ -18,5 +15,5 @@ COPY . .
 
 # Compile and deploy the contract
 # CMD ["node_modules/.bin/truffle", "migrate"]
-# CMD ["sh", "-c", "/app/node_modules/.bin/truffle migrate && touch /app/build/contracts/.SUCCESS"]
-CMD ["sleep", "999d"]
+CMD ["sh", "-c", "/app/node_modules/.bin/truffle migrate && touch /app/build/contracts/.SUCCESS"]
+# CMD ["sleep", "999d"]

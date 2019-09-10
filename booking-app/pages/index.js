@@ -4,25 +4,24 @@ import SimpleTable from "../components/MyTable";
 import Layout from "../components/MyLayout";
 import data from "../components/data.json";
 
-import web3 from "../ethereum/web3";
 import booking from "../ethereum/booking";
 
 const timeslots = data["timeslots"];
 const roomnumbers = data["roomnumbers"];
 const companies = data["companies"];
-const company_char = companies[0];
+const company_char = companies[1];
 
 var statusToIsAvailable = {
   free: true,
   booked: false
 };
 
-function getId(timeslot_, room_) {
+function getTokenId(timeslot_, room_) {
   // timeslot and room start at 0
-  return parseInt(timeslot_) * roomnumbers.length + parseInt(room_);
+  return parseInt(timeslot_) + parseInt(room_) * timeslots.length;
 }
 
-function bookingMessage(timeslot, room, name) {
+function bookingMessage(timeslot, room, toAddress) {
   var message =
     "The room " +
     company_char +
@@ -30,12 +29,12 @@ function bookingMessage(timeslot, room, name) {
     " has succesfully been booked at " +
     timeslots[timeslot] +
     " by " +
-    name +
+    toAddress +
     ".";
   return message;
 }
 
-function cancellationMessage(timeslot, room, name) {
+function cancellationMessage(timeslot, room, toAddress) {
   var message =
     "The reservation of the romm " +
     company_char +
@@ -43,50 +42,42 @@ function cancellationMessage(timeslot, room, name) {
     " at " +
     timeslots[timeslot] +
     " has succesfully been canceled by " +
-    name +
+    toAddress +
     ".";
   return message;
 }
 
-const bookRoom = async function(timeslot, room, name, password) {
-  var accounts = await web3.eth.getAccounts();
+const bookRoom = async function(timeslot, room, toAddress) {
+  var tokenId = getTokenId(timeslot, room);
+  var fromAddress = await booking.methods.ownerOf(tokenId).call();
   try {
     await booking.methods
-      .bookRoom(
-        timeslot,
-        room,
-        web3.utils.fromAscii(name),
-        web3.utils.fromAscii(password)
-      )
-      .send({ from: accounts[0], gasLimit: "1000000" })
+      .bookRoom(timeslot, room, toAddress)
+      .send({ from: fromAddress, gasLimit: "1000000" })
       .then(result => console.log("bookRoom: ", result))
       .catch(err => {
         console.log(err);
         throw err;
       })
-      .then(() => alert(bookingMessage(timeslot, room, name)));
+      .then(() => alert(bookingMessage(timeslot, room, toAddress)));
   } catch (err) {
     alert(err);
   }
 };
 
-const cancelReservation = async function(timeslot, room, name, password) {
-  var accounts = await web3.eth.getAccounts();
+const cancelReservation = async function(timeslot, room, toAddress) {
+  var tokenId = getTokenId(timeslot, room);
+  var fromAddress = await booking.methods.ownerOf(tokenId).call();
   try {
     await booking.methods
-      .cancelReservation(
-        timeslot,
-        room,
-        web3.utils.fromAscii(name),
-        web3.utils.fromAscii(password)
-      )
-      .send({ from: accounts[0], gasLimit: "1000000" })
-      .then(result => console.log("cancelReservation: ", result))
+      .cancelReservation(timeslot, room, toAddress)
+      .send({ from: fromAddress, gasLimit: "1000000" })
+      .then(result => console.log("bookRoom: ", result))
       .catch(err => {
         console.log(err);
         throw err;
       })
-      .then(() => alert(cancellationMessage(timeslot, room, name)));
+      .then(() => alert(cancellationMessage(timeslot, room, toAddress)));
   } catch (err) {
     alert(err);
   }
@@ -147,17 +138,11 @@ const Index = () => {
     <Layout>
       <div style={{ textAlign: "center" }}>
         <MyForm
-          onSubmit={async ({
-            timeslot,
-            roomnumber,
-            newStatus,
-            name,
-            password
-          }) => {
+          onSubmit={async ({ toAddress, timeslot, roomnumber, newStatus }) => {
             if (newStatus == "booked") {
-              bookRoom(timeslot, roomnumber, name, password);
+              bookRoom(timeslot, roomnumber, toAddress);
             } else if (newStatus == "free") {
-              cancelReservation(timeslot, roomnumber, name, password);
+              cancelReservation(timeslot, roomnumber, toAddress);
             } else {
               alert("`newStatus` should be either `free` or `booked`.");
             }
@@ -165,15 +150,15 @@ const Index = () => {
               console.log(event);
               if (!error) {
                 setAvailability(currentAvailability => {
-                  var id = getId(timeslot, roomnumber);
+                  var id = getTokenId(timeslot, roomnumber);
                   return currentAvailability.map(function(val, index) {
                     return index != id ? val : statusToIsAvailable[newStatus];
                   });
                 });
                 setOwners(currentOwners => {
-                  var id = getId(timeslot, roomnumber);
+                  var id = getTokenId(timeslot, roomnumber);
                   return currentOwners.map(function(val, index) {
-                    return index != id ? val : web3.utils.fromAscii(name);
+                    return index != id ? val : toAddress;
                   });
                 });
               }

@@ -21,7 +21,7 @@ services:
       - app-volume:/app/build/contracts/
     ports:
       - 3000:3000
-    command: ["./scripts/wait-for-contract.sh", "npm run dev"]
+    command: ["./scripts/wait-for-contract.sh", "--", "npm run dev"]
     depends_on:
       - ganache
       - booking-contract
