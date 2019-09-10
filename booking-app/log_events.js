@@ -31,11 +31,11 @@ const contract_instance = new web3.eth.Contract(abi, address);
 // });
 
 contract_instance.getPastEvents(
-  "Debug",
+  "allEvents",
   { fromBlock: 0, toBlock: "latest" },
   (errors, events) => {
     if (!errors) {
-      console.log("Events:", events);
+      console.log("Events:", events.map(elt => elt.event));
     }
   }
 );

@@ -4,7 +4,6 @@ import SimpleTable from "../components/MyTable";
 import Layout from "../components/MyLayout";
 import data from "../components/data.json";
 
-import web3 from "../ethereum/web3";
 import booking from "../ethereum/booking";
 
 const timeslots = data["timeslots"];
@@ -53,7 +52,7 @@ const bookRoom = async function(timeslot, room, toAddress) {
   var fromAddress = await booking.methods.ownerOf(tokenId).call();
   try {
     await booking.methods
-      .bookRoom(timeslot, room, web3.utils.fromAscii(parseInt(toAddress)))
+      .bookRoom(timeslot, room, toAddress)
       .send({ from: fromAddress, gasLimit: "1000000" })
       .then(result => console.log("bookRoom: ", result))
       .catch(err => {
@@ -71,11 +70,7 @@ const cancelReservation = async function(timeslot, room, toAddress) {
   var fromAddress = await booking.methods.ownerOf(tokenId).call();
   try {
     await booking.methods
-      .cancelReservation(
-        timeslot,
-        room,
-        web3.utils.fromAscii(parseInt(toAddress))
-      )
+      .cancelReservation(timeslot, room, toAddress)
       .send({ from: fromAddress, gasLimit: "1000000" })
       .then(result => console.log("bookRoom: ", result))
       .catch(err => {
@@ -163,7 +158,7 @@ const Index = () => {
                 setOwners(currentOwners => {
                   var id = getTokenId(timeslot, roomnumber);
                   return currentOwners.map(function(val, index) {
-                    return index != id ? val : web3.utils.fromAscii(toAddress);
+                    return index != id ? val : toAddress;
                   });
                 });
               }

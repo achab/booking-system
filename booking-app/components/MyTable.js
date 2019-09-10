@@ -67,8 +67,7 @@ function SimpleTable({ availability, owners }) {
                     owners[getTokenId(row, col)] === undefined ||
                     !web3.utils.isHexStrict(owners[getTokenId(row, col)])
                       ? ""
-                      : " by " +
-                        web3.utils.toAscii(owners[getTokenId(row, col)]))}
+                      : " by " + owners[getTokenId(row, col)].slice(0, 6))}
                 </TableCell>
               ))}
             </TableRow>
