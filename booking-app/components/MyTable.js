@@ -32,9 +32,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function getId(timeslot_, room_) {
+function getTokenId(timeslot_, room_) {
   // timeslot and room start at 0
-  return timeslot_ * roomnumbers.length + room_;
+  return timeslot_ + room_ * timeslots.length;
 }
 
 function SimpleTable({ availability, owners }) {
@@ -62,12 +62,13 @@ function SimpleTable({ availability, owners }) {
               </TableCell>
               {roomnumbers.map((roomnumber, col) => (
                 <TableCell align="center" key={slot + roomnumber}>
-                  {isAvailableToStatus[availability[getId(row, col)]] +
-                    (availability[getId(row, col)] ||
-                    owners[getId(row, col)] === undefined ||
-                    !web3.utils.isHexStrict(owners[getId(row, col)])
+                  {isAvailableToStatus[availability[getTokenId(row, col)]] +
+                    (availability[getTokenId(row, col)] ||
+                    owners[getTokenId(row, col)] === undefined ||
+                    !web3.utils.isHexStrict(owners[getTokenId(row, col)])
                       ? ""
-                      : " by " + web3.utils.toAscii(owners[getId(row, col)]))}
+                      : " by " +
+                        web3.utils.toAscii(owners[getTokenId(row, col)]))}
                 </TableCell>
               ))}
             </TableRow>

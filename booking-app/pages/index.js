@@ -19,7 +19,7 @@ var statusToIsAvailable = {
 
 function getTokenId(timeslot_, room_) {
   // timeslot and room start at 0
-  return parseInt(room_) * timeslots.length + parseInt(timeslot_);
+  return parseInt(timeslot_) + parseInt(room_) * timeslots.length;
 }
 
 function bookingMessage(timeslot, room, toAddress) {
@@ -50,66 +50,42 @@ function cancellationMessage(timeslot, room, toAddress) {
 
 const bookRoom = async function(timeslot, room, toAddress) {
   var tokenId = getTokenId(timeslot, room);
-  var fromAddress = await booking.methods.ownerOf(tokenId);
-  // define transaction object
-  const tx = {
-    from: fromAddress,
-    to: toAddress,
-    data: booking.methods
-      .bookRoom(timeslot, room, web3.utils.fromAscii(toAddress))
-      .encodeABI()
-  };
-  // sign the transaction (`tx.from` works as private key for unlocked accounts)
-  var privateKey = tx.from;
-  const signPromise = web3.eth.signTransaction(tx, privateKey);
-  signPromise.then(signedTx => {
-    const sentTx = web3.eth.sendSignedTransaction(
-      signedTx.raw || signedTx.rawTransaction
-    );
-    sentTx.on("receipt", receipt => {
-      console.log("receipt: ", receipt);
-      alert(bookingMessage(timeslot, room, toAddress));
-    });
-    sentTx
-      .on("error", err => {
-        console.log("error:", err);
-      })
+  var fromAddress = await booking.methods.ownerOf(tokenId).call();
+  try {
+    await booking.methods
+      .bookRoom(timeslot, room, web3.utils.fromAscii(parseInt(toAddress)))
+      .send({ from: fromAddress, gasLimit: "1000000" })
+      .then(result => console.log("bookRoom: ", result))
       .catch(err => {
-        alert(err);
-      });
-  });
+        console.log(err);
+        throw err;
+      })
+      .then(() => alert(bookingMessage(timeslot, room, toAddress)));
+  } catch (err) {
+    alert(err);
+  }
 };
 
 const cancelReservation = async function(timeslot, room, toAddress) {
   var tokenId = getTokenId(timeslot, room);
-  var fromAddress = await booking.methods.ownerOf(tokenId);
-  // define transaction object
-  const tx = {
-    from: fromAddress,
-    to: toAddress,
-    data: booking.methods
-      .cancelReservation(timeslot, room, web3.utils.fromAscii(toAddress))
-      .encodeABI()
-  };
-  // sign the transaction (`tx.from` works as private key for unlocked accounts)
-  var privateKey = tx.from;
-  const signPromise = web3.eth.signTransaction(tx, privateKey);
-  signPromise.then(signedTx => {
-    const sentTx = web3.eth.sendSignedTransaction(
-      signedTx.raw || signedTx.rawTransaction
-    );
-    sentTx.on("receipt", receipt => {
-      console.log("receipt: ", receipt);
-      alert(cancellationMessage(timeslot, room, toAddress));
-    });
-    sentTx
-      .on("error", err => {
-        console.log("error:", err);
-      })
+  var fromAddress = await booking.methods.ownerOf(tokenId).call();
+  try {
+    await booking.methods
+      .cancelReservation(
+        timeslot,
+        room,
+        web3.utils.fromAscii(parseInt(toAddress))
+      )
+      .send({ from: fromAddress, gasLimit: "1000000" })
+      .then(result => console.log("bookRoom: ", result))
       .catch(err => {
-        alert(err);
-      });
-  });
+        console.log(err);
+        throw err;
+      })
+      .then(() => alert(cancellationMessage(timeslot, room, toAddress)));
+  } catch (err) {
+    alert(err);
+  }
 };
 
 const getAvailability = async () => {
@@ -167,7 +143,7 @@ const Index = () => {
     <Layout>
       <div style={{ textAlign: "center" }}>
         <MyForm
-          onSubmit={async ({ timeslot, roomnumber, newStatus, toAddress }) => {
+          onSubmit={async ({ toAddress, timeslot, roomnumber, newStatus }) => {
             if (newStatus == "booked") {
               bookRoom(timeslot, roomnumber, toAddress);
             } else if (newStatus == "free") {

@@ -5,8 +5,7 @@ const abi = contract["abi"];
 const networks = contract["networks"];
 const address = networks[Object.keys(networks)[0]]["address"];
 
-console.log("Address of the contract id", address);
+// console.log("Address of the contract id", address);
 const booking = new web3.eth.Contract(abi, address);
-console.log("Booking methods: ", booking.methods);
 
 export default booking;
