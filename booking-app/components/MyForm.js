@@ -7,7 +7,8 @@ export const MyForm = ({ onSubmit }) => {
   return (
     <Formik
       initialValues={{
-        toAddress: "",
+        name: "",
+        password: "",
         timeslot: "",
         roomnumber: "",
         newStatus: ""
@@ -21,11 +22,10 @@ export const MyForm = ({ onSubmit }) => {
         <Form>
           <br />
           <div>
-            <Field
-              name="toAddress"
-              placeholder="toAddress"
-              component={MyField}
-            />
+            <Field name="name" placeholder="name" component={MyField} />
+          </div>
+          <div>
+            <Field name="password" placeholder="password" component={MyField} />
           </div>
           <div>
             <Field
