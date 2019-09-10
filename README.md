@@ -1,16 +1,18 @@
 # booking-system
 
-Clean the environment
+## Clean the environment
+### If you're running the app for the first time, go to the next command.
 ```
 docker stop $(docker ps -a -q)
 docker rm $(docker ps -q -f "status=exited")
 docker volume rm booking-system_app-volume
 ```
-Build the project
+## Build the project
 ```
 docker-compose build
 ```
-Run the project, i.e. run a local blockchain - with ganache-cli -, build the contract - using truffle - and start the app - made with react and next.
+## Run the project
+### That is: run a local blockchain - with ganache-cli -, build the contract - using truffle - and start the app - made with react and next.
 ```
 docker-compose up
 ```
