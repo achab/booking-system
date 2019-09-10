@@ -55,11 +55,11 @@ const bookRoom = async function(timeslot, room, toAddress) {
       .bookRoom(timeslot, room, toAddress)
       .send({ from: fromAddress, gasLimit: "1000000" })
       .then(result => console.log("bookRoom: ", result))
+      .then(alert(bookingMessage(timeslot, room, toAddress)))
       .catch(err => {
         console.log(err);
         throw err;
-      })
-      .then(() => alert(bookingMessage(timeslot, room, toAddress)));
+      });
   } catch (err) {
     alert(err);
   }
@@ -72,12 +72,12 @@ const cancelReservation = async function(timeslot, room, toAddress) {
     await booking.methods
       .cancelReservation(timeslot, room, toAddress)
       .send({ from: fromAddress, gasLimit: "1000000" })
-      .then(result => console.log("bookRoom: ", result))
+      .then(result => console.log("cancelReservation: ", result))
+      .then(alert(cancellationMessage(timeslot, room, toAddress)))
       .catch(err => {
         console.log(err);
         throw err;
-      })
-      .then(() => alert(cancellationMessage(timeslot, room, toAddress)));
+      });
   } catch (err) {
     alert(err);
   }
