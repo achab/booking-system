@@ -7,9 +7,6 @@ WORKDIR /app
 # Install app dependencies
 COPY package*.json ./
 
-# Clean previous build
-RUN rm -rf build/contracts/*
-
 # Install libraries
 RUN npm install
 
