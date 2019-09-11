@@ -19,3 +19,10 @@ docker-compose up
 
 Note that port 7545 is to be used by ganache, and then should not be used by another app.
 Once started, the app is available on localhost:3000.
+
+# Important note
+This repo contains two different projects: 
+- a simple contract with only one ethereum account for Coca-Cola (branch `master`)
+- a contract based on ERC721 for Pepsi (branch `pepsi`)
+
+Each project can be built using docker commands given above.
